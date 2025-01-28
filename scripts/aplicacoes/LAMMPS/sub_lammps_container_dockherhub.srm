@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=48
+#SBATCH --ntasks=192
+#SBATCH --gpus-per-node=4
+#SBATCH -p sequana_gpu_dev
+#SBATCH -J lammps+HEAT+container-nvidia
+
+#Exibe os nos alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+export SINGULARITY="singularity run --nv -B ${PWD}:/host_pwd --pwd /host_pwd lammps_patch_3Nov2022.sif"
+srun --mpi=pmi2 $SINGULARITY lmp -k on g 4 -sf kk -pk kokkos cuda/aware on neigh full comm device binsize 2.8 -in  in.spce.ehex

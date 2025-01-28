@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH --nodes=1                      #Numero de Nós deve ser igual a 1
+#SBATCH --ntasks-per-node=1            #Numero de tarefas por Nó deve ser igual a 1
+#SBATCH --ntasks=1                     #Numero total de tarefas deve ser igual a 1
+#SBATCH --cpus-per-task=48             #Numero de threads
+#SBATCH -p sequana_cpu_dev             #Fila (partition) a ser utilizada
+#SBATCH -J NPB-MZ-sp-openmp-intel      #Nome job
+
+#Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+#Configura os compiladores
+module load intel_psxe/2020_sequana
+
+#exibe informações sobre o executável
+EXEC=/scratch/app/NPB3.3.1-MZ/bin/sp-mz.C.openmp-intel.x
+/usr/bin/ldd  $EXEC
+
+#Configura o numero de threads OpenMP com o valor passado para a variavel --cpus-per-task
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+srun -c $SLURM_CPUS_PER_TASK $EXEC

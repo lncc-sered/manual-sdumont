@@ -1,0 +1,28 @@
+#!/bin/bash
+#SBATCH --nodes=N                      #Numero de Nós
+#SBATCH --ntasks-per-node=TPN          #Numero de tarefas por Nó
+#SBATCH --ntasks=T                     #Numero total de tarefas MPI
+#SBATCH -p FILA                        #Fila (partition) a ser utilizada
+#SBATCH -J JOB			       #Nome job
+
+#Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+cd $SLURM_SUBMIT_DIR
+
+#Configura os compiladores
+#-------------------------#
+## 1) Carregar o módulo do MPI utilizado, conforme indicado na seção "Compiladores e MPI"
+module load <MPI>/<versão>
+
+## 2) Carregar o módulo da aplicação, caso necessário
+module load <aplicacao>/<versão>
+
+#Configura o executavel
+EXEC=/scratch/CAMINHO/PARA/O/EXECUTAVEL
+
+#exibe informações sobre o executável
+/usr/bin/ldd $EXEC
+
+#Inicia a execucao
+srun $EXEC

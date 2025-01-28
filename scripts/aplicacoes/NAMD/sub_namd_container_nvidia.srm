@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks=4
+#SBATCH --gpus-per-node=4
+#SBATCH -p sequana_gpu_dev
+#SBATCH -J namd+apoa1+container-nvidia
+
+#Exibe os nos alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+export NAMD_EXE=namd3
+export SINGULARITY="singularity run --nv -B ${PWD}:/host_pwd --pwd /host_pwd namd_3.0-beta5.sif"
+$SINGULARITY $NAMD_EXE  +p${SLURM_NTASKS} +devices 0,1,2,3 +setcpuaffinity apoa1_nve_cuda_soa.namd

@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=8
+#SBATCH --ntasks=32
+#SBATCH --cpus-per-task=6
+#SBATCH --gpus-per-node=4
+#SBATCH -p sequana_gpu_dev
+#SBATCH -J gromacs+stmv+container_dockehub
+
+#Exibe os nos alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+module load  mathlibs/fftw/3.3.10_openmpi-4.1.4_gnu_sequana   cuda/11.2_sequana
+
+cd $SLURM_SUBMIT_DIR
+
+#configura o numero de threads, de acordo com o parametro definido no Slurm
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+export GMX_ENABLE_DIRECT_GPU_COMM=1
+
+export SINGULARITY="singularity run --nv gromacs_2020.6.sif"
+mpirun ${SINGULARITY} gmx mdrun -ntomp $SLURM_CPUS_PER_TASK  -v -s topol.tpr -deffnm stmv  -nsteps 100000 -resetstep 90000 -noconfout -dlb no -nstlist 300

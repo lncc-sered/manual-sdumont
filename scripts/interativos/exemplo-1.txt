@@ -1,0 +1,24 @@
+#OBS: Esse arquivo não deve ser executado. É apenas um exemplo de como utilizar a alocação interativa
+
+salloc --nodes=2 --ntasks-per-node=12 --ntasks=24 -p sequana_cpu_dev -J NPB-MZ-interativo
+
+#SLURM exibirá informações sobre a alocação dos recursos
+salloc: Pending job allocation NNNNNNNNN
+salloc: job NNNNNNNNN queued and waiting for resources
+salloc: job NNNNNNNNN has been allocated resources
+salloc: Granted job allocation NNNNNNNNN
+salloc: Waiting for resource configuration
+salloc: Nodes sdumont[YYYYY-ZZZZZ] are ready for job
+
+#verificar quais nós foram alocados para o job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+#carregar as bibliotecas
+module load intel_psxe/2016
+
+#executa a aplicação
+srun -n 24 /scratch/app/NPB3.3.1-MZ/bin/sp-mz.C.intelmpi.24 
+
+#encerra a sessão interativa e termina o job
+exit

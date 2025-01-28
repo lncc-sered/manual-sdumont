@@ -1,0 +1,21 @@
+#!/bin/bash
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=48
+#SBATCH --ntasks=192
+#SBATCH --gpus-per-node=4
+#SBATCH -p sequana_gpu_dev
+#SBATCH -J lammps+HEAT+compilado
+
+#Exibe os nos alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+#Carrega o modulo do lammps
+module load lammps/3Nov22_openmpi_cuda_gnu_sequana
+
+#Configura o executavel
+EXEC=/scratch/app/lammps/3Nov22_openmpi_cuda_gnu/bin/lmp
+
+srun -n $SLURM_NTASKS $EXEC -sf gpu  -in in.spce.ehex

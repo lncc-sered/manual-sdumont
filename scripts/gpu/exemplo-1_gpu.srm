@@ -1,0 +1,25 @@
+#!/bin/bash
+#SBATCH --nodes=2         #Numero de Nos
+#SBATCH -p sequana_gpu_dev    #Fila (partition) a ser utilizada
+#SBATCH -J simpleMultiGPU #Nome job
+#SBATCH --gpus=4          #Numero total de GPUS
+
+#Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+#Configura os Módulos
+module load cuda/11.2_sequana
+
+#Exibe as GPUs disponiveis 
+nvidia-smi
+
+#Configura o executavel
+EXEC=/scratch/app/cuda-samples/cuda-11.2-samples/bin/x86_64/linux/release/simpleMultiGPU
+
+#exibe informações sobre o executável
+/usr/bin/ldd $EXEC
+
+srun $EXEC

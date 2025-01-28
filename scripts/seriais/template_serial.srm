@@ -1,0 +1,30 @@
+#!/bin/bash
+#SBATCH --nodes=1                      #Numero de Nós = 1
+#SBATCH --ntasks=1                     #Numero total de tarefas = 1
+#SBATCH -p FILA                        #Fila (partition) a ser utilizada
+#SBATCH -J JOB			       #Nome job
+
+#Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+#Entra no diretório de submissão
+cd $SLURM_SUBMIT_DIR
+
+#Configura os compiladores
+#-------------------------#
+
+#Intel
+#module load intel_psxe/VERSAO
+##########    ou    ##########
+#GNU GCC
+#module load gnu/VERSAO
+
+
+#Configura o executavel
+EXEC=/scratch/CAMINHO/PARA/O/EXECUTAVEL
+
+#exibe informações sobre o executável
+/usr/bin/ldd $EXEC
+
+srun $EXEC

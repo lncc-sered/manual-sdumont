@@ -1,0 +1,22 @@
+#!/bin/bash
+#SBATCH --nodes=1            #Numero de Nós
+#SBATCH --ntasks=1           #Numero de tarefas
+#SBATCH -p sequana_cpu_dev   #Fila (partition) a ser utilizada
+#SBATCH -J exemplo_1_serial  #Nome job
+
+#Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+cd $SLURM_SUBMIT_DIR
+
+#Configura os compiladores GNU, versão 9.11
+module load gcc/4.9.3_sequana
+
+#Configura o executavel
+EXEC=/scratch/app/NPB3.3.1-MZ/bin/cg.C.x
+
+#exibe informações sobre o executável
+/usr/bin/ldd $EXEC
+
+#Inicia a execucao
+srun $EXEC

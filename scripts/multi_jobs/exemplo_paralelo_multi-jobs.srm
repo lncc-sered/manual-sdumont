@@ -1,0 +1,27 @@
+#!/bin/bash
+#SBATCH --nodes=4                   #Numero de Nós
+#SBATCH --ntasks-per-node=48        #Numero de tarefas por Nó
+#SBATCH --ntasks=192                #Numero total de tarefas MPI
+#SBATCH -p sequana_cpu_dev          #Fila (partition) a ser utilizada
+#SBATCH -J NPB-MZ-bt-Multi          #Nome job
+
+#Exibe os nos alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+#Configura os compiladores
+module load openmpi/gnu/4.1.4_sequana
+
+#Configura o executavel
+EXEC=/scratch/app/NPB3.3.1-MZ/bin/bt-mz.C.x
+
+/usr/bin/ldd  $EXEC
+
+#configura o numero de threads como 1
+export OMP_NUM_THREADS=1
+
+srun --nodes=2 --ntasks=96 $EXEC > out.exec.1.txt 2>&1 &
+srun --nodes=2 --ntasks=96 $EXEC > out.exec.2.txt 2>&1 &
+wait

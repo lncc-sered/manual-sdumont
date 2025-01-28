@@ -1,0 +1,29 @@
+#!/bin/bash
+#SBATCH --nodes=2            #Numero de Nos
+#SBATCH -p sequana_gpu       #Fila (partition) a ser utilizada
+#SBATCH -J cudaOpenMP        #Nome job
+#SBATCH --gpus=2             #Numero total de GPUS
+#SBATCH --gpus-per-node=1    #Numero de GPUS por no
+#SBATCH --cpus-per-gpu=4     #Numero de CPUs por GPU
+#SBATCH --mem-per-gpu=32000  #Memoria em GB por GPU
+
+#Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+#Configura os Módulos
+module load openmpi/gnu/4.1.2+cuda-11.2_sequana
+
+#Exibe as GPUs disponiveis 
+nvidia-smi
+
+
+#Configura o executavel
+EXEC=/scratch/app/cuda-samples/cuda-11.2-samples/bin/x86_64/linux/release/cudaOpenMP
+
+#exibe informações sobre o executável
+/usr/bin/ldd $EXEC
+
+srun $EXEC

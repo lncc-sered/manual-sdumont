@@ -1,0 +1,39 @@
+#OBS: Esse arquivo não deve ser executado. É apenas um exemplo de como utilizar a alocação interativa
+
+salloc --nodes=4 --ntasks-per-node=6   --ntasks=24  -p sequana_cpu_dev   -J Interativo
+#SLURM exibirá informações sobre a alocação dos recursos
+salloc: Pending job allocation NNNNNNNNN
+salloc: job NNNNNNNNN queued and waiting for resources
+salloc: job NNNNNNNNN has been allocated resources
+salloc: Granted job allocation NNNNNNNNN
+salloc: Waiting for resource configuration
+salloc: Nodes sdumont[6000-6003] are ready for job
+
+#verificar quais nós foram alocados para o job
+echo $SLURM_JOB_NODELIST
+#retornará algo como sdumont[6000-6003]
+
+nodeset -e $SLURM_JOB_NODELIST
+#retornará algo como sdumont6000 sdumont6001 sdumont6002 sdumont6003
+                  
+
+#acessar o primeiro nó alocado
+ssh sdumont6000
+
+#carregar as bibliotecas
+[usuario@sdumont6000 ~]$ module load openmpi/2.0.4.2
+[usuario@sdumont6000 ~]$ module load gcc/6.5
+
+#pode realizar a compilação da aplicação
+[usuario@sdumont6000 ~]$ cd $SCRATCH/CODIGO
+[usuario@sdumont6000 CODIGO]$ make ....
+
+#executa a aplicação, utilizando o mpiexec
+[usuario@sdumont6000 CODIGO]$ mpiexec -x LD_LIBRARY_PATH \
+ --host sdumont6000,sdumont6001,sdumont6002,sdumont6003 -np 24 -npernode 6  ${PWD}/executavel
+
+#encerra a sessão no nó sdumont6000
+[usuario@sdumont6000 ~]$ exit
+
+#encerra a sessão interativa e termina o job
+exit

@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH --nodes=4                      #Numero de Nós
+#SBATCH --ntasks-per-node=24           #Numero de tarefas por Nó
+#SBATCH --ntasks=96                    #Numero total de tarefas MPI
+#SBATCH -p sequana_cpu                 #Fila (partition) a ser utilizada
+#SBATCH -J NPB-MZ-sp-intelmpi-24       #Nome job
+#SBATCH --time=01:00:00		       #Altera o tempo limite para 1 hora
+
+#Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+#Configura os compiladores
+module load openmpi/gnu/4.1.4_sequana
+
+#Configura o executavel
+EXEC=/scratch/app/NPB3.3.1-MZ/bin/bt-mz.C.x
+
+#exibe informações sobre o executável
+/usr/bin/ldd $EXEC
+
+srun $EXEC
