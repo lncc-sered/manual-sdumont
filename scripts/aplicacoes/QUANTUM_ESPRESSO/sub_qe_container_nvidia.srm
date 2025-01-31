@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=48
+#SBATCH --ntasks=96
+#SBATCH --gpus-per-node=4
+#SBATCH -p sequana_gpu_dev
+#SBATCH -J qe+ausurf+container-nvidia
+
+#Exibe os nos alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+export SINGULARITY="singularity run --nv -B ${PWD}:/host_pwd --pwd /host_pwd quantum_espresso_qe-7.3.1.sif"
+srun --mpi=pmix_v3  $SINGULARITY pw.x -input ausurf.in

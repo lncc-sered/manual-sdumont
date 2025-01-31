@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=48
+#SBATCH --ntasks=192
+#SBATCH --gpus-per-node=4
+#SBATCH -p sequana_gpu_dev
+#SBATCH -J cp2k+H2O-dft-ls+container-dockerhub
+
+#Exibe os nos alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+export SINGULARITY="singularity run --nv -B ${PWD}:/host_pwd --pwd /host_pwd cp2k_2022.1.sif"
+srun --mpi=pmi2  $SINGULARITY cp2k.psmp -i H2O-dft-ls.NREP2.inp

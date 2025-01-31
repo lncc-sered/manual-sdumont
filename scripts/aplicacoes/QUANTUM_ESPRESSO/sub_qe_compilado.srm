@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH --nodes=2              #Numero de Nós
+#SBATCH --ntasks-per-node=48   #Numero de tarefas por Nó
+#SBATCH --ntasks=96            #Numero total de tarefas MPI
+#SBATCH -p sequana_cpu_dev     #Fila (partition) a ser utilizada
+#SBATCH -J qe+ausurf+compilado #Nome job
+
+#Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+#Configura o modulo
+module load quantum-espresso/7.3.1_intel_2020_sequana
+
+
+#Configura o executavel
+EXEC=$(which pw.x)
+
+#exibe informações sobre o executável
+/usr/bin/ldd $EXEC
+
+srun $EXEC -input ausurf.in

@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH --nodes=1            #Numero de Nos
+#SBATCH -p gdl               #Fila (partition) a ser utilizada
+#SBATCH -J tensorflow_conda  #Nome job
+#SBATCH --gpus=4             #Numero total de GPUS
+
+#Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+export SINGULARITY="singularity run --nv -B ${PWD}:/host_pwd --pwd /host_pwd tensorflow_24.12-tf2-py3.sif"
+${SINGULARITY} python ./teste-tf.py

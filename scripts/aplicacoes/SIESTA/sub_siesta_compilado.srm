@@ -1,0 +1,22 @@
+#!/bin/bash
+#SBATCH --nodes=2                 #Numero de Nós
+#SBATCH --ntasks-per-node=48      #Numero de tarefas por Nó
+#SBATCH --ntasks=96               #Numero total de tarefas MPI
+#SBATCH -p sequana_cpu_dev        #Fila (partition) a ser utilizada
+#SBATCH -J teste_siesta_compilado #Nome job
+
+#Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+
+#Configura o modulo
+module load siesta/4.1.5_intel_2020_sequana
+
+#Configura o executavel
+EXEC=$(which siesta)
+
+#exibe informações sobre o executável
+/usr/bin/ldd $EXEC
+
+srun $EXEC < carbon_nanoscroll.fdf

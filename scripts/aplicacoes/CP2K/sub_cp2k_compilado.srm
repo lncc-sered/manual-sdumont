@@ -1,0 +1,21 @@
+#!/bin/bash
+#SBATCH --nodes=4
+#SBATCH --ntasks-per-node=48
+#SBATCH --ntasks=192
+#SBATCH --gpus-per-node=4
+#SBATCH -p sequana_gpu_dev
+#SBATCH -J cp2k+H2O-dft-ls+compilada
+
+#Exibe os nos alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+#carrega o modulo do CP2K
+module load cp2k/9.1_openmpi_gnu_sequana
+
+#Configura o executavel
+EXEC=/scratch/app_sequana/cp2k/9.1_openmpi_gnu/bin/cp2k.popt_cuda
+
+srun $EXEC -i H2O-dft-ls.NREP2.inp

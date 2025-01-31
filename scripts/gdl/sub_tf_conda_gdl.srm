@@ -1,0 +1,26 @@
+#!/bin/bash
+#SBATCH --nodes=1            #Numero de Nos
+#SBATCH -p gdl               #Fila (partition) a ser utilizada
+#SBATCH -J tensorflow_conda  #Nome job
+#SBATCH --gpus=8             #Numero total de GPUS
+
+#Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+#Configura os Módulos
+module load anaconda3/2024.02_sequana
+
+#Ativa o ambiente conda
+source activate $SCRATCH/conda-env/test-tf
+
+#Exibe as GPUs disponiveis 
+nvidia-smi
+
+#Verificando se está utilizando o python do local correto (ambiente conda)
+which python3
+
+#Executa o Tensorflow
+python3 ./teste-tf.py

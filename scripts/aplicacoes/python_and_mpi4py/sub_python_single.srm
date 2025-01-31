@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --nodes=1           #Numero de Nós
+#SBATCH --ntasks=1          #Numero total de tarefas MPI
+#SBATCH -p sequana_cpu_dev  #Fila (partition) a ser utilizada
+#SBATCH -J python_1_no      #Nome job
+
+#Exibe os nós alocados para o Job
+echo $SLURM_JOB_NODELIST
+nodeset -e $SLURM_JOB_NODELIST
+
+cd $SLURM_SUBMIT_DIR
+
+#Carrega o modulo do anaconda
+module load anaconda3/2024.02_sequana
+
+#Ativar o virtual env
+source activate $SCRATCH/conda-env
+
+#executa o python
+python meu_script.py
